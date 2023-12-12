@@ -11,10 +11,19 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsOptional } from "class-validator";
+import {
+  IsString,
+  ValidateNested,
+  IsOptional,
+  IsNumber,
+} from "class-validator";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
+import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { TripCreateNestedManyWithoutListingsInput } from "./TripCreateNestedManyWithoutListingsInput";
+import { WishlistCreateNestedManyWithoutListingsInput } from "./WishlistCreateNestedManyWithoutListingsInput";
 
 @InputType()
 class ListingCreateInput {
@@ -24,7 +33,16 @@ class ListingCreateInput {
   })
   @IsString()
   @Field(() => String)
-  listingCreateBy!: string;
+  description!: string;
+
+  @ApiProperty({
+    required: true,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @Field(() => UserWhereUniqueInput)
+  listingCreateBy!: UserWhereUniqueInput;
 
   @ApiProperty({
     required: false,
@@ -82,6 +100,46 @@ class ListingCreateInput {
   @IsString()
   @Field(() => String)
   placeType!: string;
+
+  @ApiProperty({
+    required: true,
+    type: Number,
+  })
+  @IsNumber()
+  @Field(() => Number)
+  price!: number;
+
+  @ApiProperty({
+    required: true,
+    type: String,
+  })
+  @IsString()
+  @Field(() => String)
+  title!: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => TripCreateNestedManyWithoutListingsInput,
+  })
+  @ValidateNested()
+  @Type(() => TripCreateNestedManyWithoutListingsInput)
+  @IsOptional()
+  @Field(() => TripCreateNestedManyWithoutListingsInput, {
+    nullable: true,
+  })
+  trips?: TripCreateNestedManyWithoutListingsInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => WishlistCreateNestedManyWithoutListingsInput,
+  })
+  @ValidateNested()
+  @Type(() => WishlistCreateNestedManyWithoutListingsInput)
+  @IsOptional()
+  @Field(() => WishlistCreateNestedManyWithoutListingsInput, {
+    nullable: true,
+  })
+  wishlists?: WishlistCreateNestedManyWithoutListingsInput;
 }
 
 export { ListingCreateInput as ListingCreateInput };
